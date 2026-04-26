@@ -707,8 +707,8 @@ Adapter *binc_adapter_get_default(GDBusConnection *dbusConnection) {
         for (guint i = 1; i < adapters->len; i++) {
             binc_adapter_free(g_ptr_array_index(adapters, i));
         }
-        g_ptr_array_free(adapters, TRUE);
     }
+    g_ptr_array_free(adapters, TRUE);
     return adapter;
 }
 
@@ -718,17 +718,15 @@ Adapter *binc_adapter_get(GDBusConnection *dbusConnection, const char *name) {
 
     Adapter *result = NULL;
     GPtrArray *adapters = binc_adapter_find_all(dbusConnection);
-    if (adapters->len > 0) {
-        for (guint i = 0; i < adapters->len; i++) {
-            Adapter *adapter = g_ptr_array_index(adapters, i);
-            if (g_str_equal(binc_adapter_get_name(adapter), name)) {
-                result = adapter;
-            } else {
-                binc_adapter_free(g_ptr_array_index(adapters, i));
-            }
+    for (guint i = 0; i < adapters->len; i++) {
+        Adapter *adapter = g_ptr_array_index(adapters, i);
+        if (result == NULL && g_str_equal(binc_adapter_get_name(adapter), name)) {
+            result = adapter;
+        } else {
+            binc_adapter_free(adapter);
         }
-        g_ptr_array_free(adapters, TRUE);
     }
+    g_ptr_array_free(adapters, TRUE);
     return result;
 }
 
